@@ -1,0 +1,65 @@
+{
+  "c1": [
+    {
+      "id": "m1",
+      "type": "received",
+      "text": "Hey, how's it going?",
+      "time": "22:30"
+    },
+    {
+      "id": "m2",
+      "type": "sent",
+      "text": "All good! What's up with you?",
+      "time": "22:31"
+    },
+    {
+      "id": "m3",
+      "type": "received",
+      "text": "thik hai",
+      "time": "22:32"
+    },
+    {
+      "id": "m4",
+      "type": "date",
+      "text": "Today"
+    }
+  ],
+  "c2": [
+    {
+      "id": "m1",
+      "type": "received",
+      "text": "New job posting available!",
+      "time": "22:00"
+    },
+    {
+      "id": "m2",
+      "type": "received",
+      "text": "Group members have changed. Click to view",
+      "time": "22:09"
+    },
+    {
+      "id": "m3",
+      "type": "date",
+      "text": "Today"
+    }
+  ],
+  "c3": [
+    {
+      "id": "m1",
+      "type": "sent",
+      "text": "Hey, you okay?",
+      "time": "20:00"
+    },
+    {
+      "id": "m2",
+      "type": "received",
+      "text": "🥺🥺",
+      "time": "20:04"
+    },
+    {
+      "id": "m3",
+      "type": "date",
+      "text": "Today"
+    }
+  ]
+}

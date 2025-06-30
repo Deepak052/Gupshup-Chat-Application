@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* index.css */
+#allchat {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+  overflow-y: scroll;
+}
+
+#allchat::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari and Opera */
+}
