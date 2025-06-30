@@ -22,5 +22,85 @@
     "time": "20:04",
     "unread": 0,
     "avatar": "https://randomuser.me/api/portraits/women/65.jpg"
+  },
+  {
+    "id": "c4",
+    "name": "College Group 📚",
+    "lastMessage": "Project submission deadline extended!",
+    "time": "19:45",
+    "unread": 5,
+    "avatar": "https://img.freepik.com/free-icon/group_318-216337.jpg"
+  },
+  {
+    "id": "c5",
+    "name": "Papa 👨‍👩‍👧‍👦",
+    "lastMessage": "Beta, khana khaya?",
+    "time": "18:15",
+    "unread": 2,
+    "avatar": "https://randomuser.me/api/portraits/men/10.jpg"
+  },
+  {
+    "id": "c6",
+    "name": "Rohit Bestie 💙",
+    "lastMessage": "Chal chai peene?",
+    "time": "17:02",
+    "unread": 0,
+    "avatar": "https://randomuser.me/api/portraits/men/40.jpg"
+  },
+  {
+    "id": "c7",
+    "name": "Suman Di",
+    "lastMessage": "Kal call karungi",
+    "time": "16:45",
+    "unread": 1,
+    "avatar": "https://randomuser.me/api/portraits/women/33.jpg"
+  },
+  {
+    "id": "c8",
+    "name": "Freelance Client",
+    "lastMessage": "Can you share the invoice today?",
+    "time": "15:38",
+    "unread": 3,
+    "avatar": "https://randomuser.me/api/portraits/men/85.jpg"
+  },
+  {
+    "id": "c9",
+    "name": "Mom ❤️",
+    "lastMessage": "Aaj paneer banaya hai",
+    "time": "14:20",
+    "unread": 0,
+    "avatar": "https://randomuser.me/api/portraits/women/55.jpg"
+  },
+  {
+    "id": "c10",
+    "name": "Cricket Gang 🏏",
+    "lastMessage": "Match kab hai bhai?",
+    "time": "13:10",
+    "unread": 4,
+    "avatar": "https://img.freepik.com/free-icon/cricket_318-917056.jpg"
+  },
+  {
+    "id": "c11",
+    "name": "Swiggy Order 🍔",
+    "lastMessage": "Your order is being prepared",
+    "time": "12:47",
+    "unread": 0,
+    "avatar": "https://img.freepik.com/free-icon/delivery_318-565626.jpg"
+  },
+  {
+    "id": "c12",
+    "name": "Mrunal 😄",
+    "lastMessage": "Bhai kal ka plan?",
+    "time": "11:35",
+    "unread": 2,
+    "avatar": "https://randomuser.me/api/portraits/men/99.jpg"
+  },
+  {
+    "id": "c13",
+    "name": "Sakshi (School Friend)",
+    "lastMessage": "Wow, amazing progress!",
+    "time": "10:15",
+    "unread": 0,
+    "avatar": "https://randomuser.me/api/portraits/women/90.jpg"
   }
 ]

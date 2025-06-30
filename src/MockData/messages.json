@@ -9,57 +9,237 @@
     {
       "id": "m2",
       "type": "sent",
-      "text": "All good! What's up with you?",
+      "text": "All good! Just finished a great book. What's up with you?",
       "time": "22:31"
     },
     {
       "id": "m3",
       "type": "received",
-      "text": "thik hai",
+      "text": "Thik hai, just chilling at home. Watched a new series today.",
       "time": "22:32"
     },
-    {
-      "id": "m4",
-      "type": "date",
-      "text": "Today"
-    }
+    { "id": "m4", "type": "date", "text": "Today" }
   ],
   "c2": [
     {
       "id": "m1",
       "type": "received",
-      "text": "New job posting available!",
+      "text": "New job posting available! Check your dashboard now for more details.",
       "time": "22:00"
     },
     {
       "id": "m2",
       "type": "received",
-      "text": "Group members have changed. Click to view",
+      "text": "Group members have changed. Click to view the updated list.",
       "time": "22:09"
     },
-    {
-      "id": "m3",
-      "type": "date",
-      "text": "Today"
-    }
+    { "id": "m3", "type": "date", "text": "Today" }
   ],
   "c3": [
     {
       "id": "m1",
       "type": "sent",
-      "text": "Hey, you okay?",
+      "text": "Hey, you okay? Haven't heard from you in a while.",
       "time": "20:00"
     },
     {
       "id": "m2",
       "type": "received",
-      "text": "🥺🥺",
+      "text": "🥺🥺 Not really, had a tough day at work.",
       "time": "20:04"
+    },
+    { "id": "m3", "type": "date", "text": "Today" }
+  ],
+  "c4": [
+    {
+      "id": "m1",
+      "type": "received",
+      "text": "Reminder: Project submission deadline extended till 15th Oct. Please submit your work by then.",
+      "time": "19:45"
+    },
+    {
+      "id": "m2",
+      "type": "sent",
+      "text": "Thanks for the update! Will make sure to finish it on time.",
+      "time": "19:47"
+    },
+    { "id": "m3", "type": "date", "text": "Yesterday" }
+  ],
+  "c5": [
+    {
+      "id": "m1",
+      "type": "received",
+      "text": "Beta, khana khaya? Aaj kitchen mein kuchh naya banaya hai.",
+      "time": "18:15"
+    },
+    {
+      "id": "m2",
+      "type": "sent",
+      "text": "Haan papa, abhi khaya! Bahut swaadista tha.",
+      "time": "18:16"
+    },
+    { "id": "m3", "type": "date", "text": "Yesterday" }
+  ],
+  "c6": [
+    {
+      "id": "m1",
+      "type": "sent",
+      "text": "Bhai kahaan hai? Chal chai peene, main cafe mein hoon.",
+      "time": "17:02"
+    },
+    {
+      "id": "m2",
+      "type": "received",
+      "text": "Aata hu 10 min mein. Traffic thoda hai.",
+      "time": "17:05"
+    },
+    { "id": "m3", "type": "date", "text": "Monday" }
+  ],
+  "c7": [
+    {
+      "id": "m1",
+      "type": "received",
+      "text": "Kal call karungi, thoda busy hoon aaj office mein.",
+      "time": "16:45"
+    },
+    {
+      "id": "m2",
+      "type": "sent",
+      "text": "Thik hai Di, take care! Apne aap ka dhyaan rakhna.",
+      "time": "16:46"
+    },
+    { "id": "m3", "type": "date", "text": "Monday" }
+  ],
+  "c8": [
+    {
+      "id": "m1",
+      "type": "received",
+      "text": "Can you please share the invoice for the last payment? We need it for our records.",
+      "time": "15:38"
+    },
+    {
+      "id": "m2",
+      "type": "sent",
+      "text": "Yes, I will send it by evening. Just need to find it in my emails.",
+      "time": "15:40"
     },
     {
       "id": "m3",
-      "type": "date",
-      "text": "Today"
-    }
+      "type": "received",
+      "text": "Thanks. Appreciate the quick response. It's quite urgent.",
+      "time": "15:41"
+    },
+    { "id": "m4", "type": "date", "text": "Sunday" }
+  ],
+  "c9": [
+    {
+      "id": "m1",
+      "type": "received",
+      "text": "Aaj paneer banaya hai, jaldi ghar aaja. Tujhe bahut pasand hai.",
+      "time": "14:20"
+    },
+    {
+      "id": "m2",
+      "type": "sent",
+      "text": "Wow! Love you Maa ❤️. Main 15 min mein ghar hoon.",
+      "time": "14:21"
+    },
+    { "id": "m3", "type": "date", "text": "Sunday" }
+  ],
+  "c10": [
+    {
+      "id": "m1",
+      "type": "sent",
+      "text": "Match kab hai bhai? Main kal se taiyaar hoon.",
+      "time": "13:10"
+    },
+    {
+      "id": "m2",
+      "type": "received",
+      "text": "Sunday ko 5 baje. Full team ready hai. Toh chal perfect hai.",
+      "time": "13:12"
+    },
+    {
+      "id": "m3",
+      "type": "sent",
+      "text": "Great, I'll bring the drinks. Kya peena pasand karega team?",
+      "time": "13:13"
+    },
+    { "id": "m4", "type": "date", "text": "Last Week" }
+  ],
+  "c11": [
+    {
+      "id": "m1",
+      "type": "received",
+      "text": "Your order is being prepared by the restaurant. It will be ready soon.",
+      "time": "12:47"
+    },
+    {
+      "id": "m2",
+      "type": "received",
+      "text": "Your order has been picked up by the delivery partner. Estimated delivery time is 30 minutes.",
+      "time": "12:55"
+    },
+    { "id": "m3", "type": "date", "text": "Last Week" }
+  ],
+  "c12": [
+    {
+      "id": "m1",
+      "type": "sent",
+      "text": "Bhai kal ka plan? Movie + dinner? Maine tickets book kar liye hain.",
+      "time": "11:35"
+    },
+    {
+      "id": "m2",
+      "type": "received",
+      "text": "Done! Book karle tu restaurant bhi. Main 6 baje aata hoon.",
+      "time": "11:36"
+    },
+    { "id": "m3", "type": "date", "text": "Last Week" }
+  ],
+  "c13": [
+    {
+      "id": "m1",
+      "type": "received",
+      "text": "Wow, amazing progress on your portfolio site. Loved the animations and the color scheme. Great job Deepak! Kaise kiya tu yeh?",
+      "time": "10:15"
+    },
+    {
+      "id": "m2",
+      "type": "sent",
+      "text": "Thanks Sakshi! Glad you liked it 😄. Bahut mehnat lagi hai ismein.",
+      "time": "10:17"
+    },
+    { "id": "m3", "type": "date", "text": "Last Month" }
+  ],
+  "c14": [
+    {
+      "id": "m1",
+      "type": "received",
+      "text": "Meeting reminder: Our quarterly review is scheduled for next Friday at 10 AM. Please prepare your reports.",
+      "time": "09:30"
+    },
+    {
+      "id": "m2",
+      "type": "sent",
+      "text": "Got it. I'll have my report ready by Thursday for review.",
+      "time": "09:32"
+    },
+    { "id": "m3", "type": "date", "text": "Last Month" }
+  ],
+  "c15": [
+    {
+      "id": "m1",
+      "type": "sent",
+      "text": "Hey, do you want to join us for a weekend trip to the mountains? We are leaving Friday evening.",
+      "time": "08:45"
+    },
+    {
+      "id": "m2",
+      "type": "received",
+      "text": "Sounds amazing! Count me in. What should I bring along?",
+      "time": "08:47"
+    },
+    { "id": "m3", "type": "date", "text": "Two Months Ago" }
   ]
 }

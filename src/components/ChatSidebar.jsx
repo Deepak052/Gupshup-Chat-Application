@@ -26,7 +26,7 @@ const ChatSidebar = ({ onSelectChat }) => {
         <Menu className="w-3 h-3" />
       </button>
       <div
-        id
+        id="allchat"
         className={`h-screen w-full md:w-80 bg-[#1e1e1e] text-white overflow-y-auto border-r border-gray-700 fixed md:sticky top-0 transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 z-40`}
@@ -47,7 +47,7 @@ const ChatSidebar = ({ onSelectChat }) => {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <div className="px-2 flex space-x-2 mb-4 text-sm flex-wrap gap-y-2">
+        <div className="px-2 flex space-x-1 mb-4 text-sm flex-wrap gap-y-2">
           {["All", "Unread", "Favourites", "Groups"].map((tab) => (
             <button
               key={tab}
@@ -90,7 +90,7 @@ const ChatSidebar = ({ onSelectChat }) => {
                   {chat.lastMessage.length > 30
                     ? chat.lastMessage.slice(0, 30) + "..."
                     : chat.lastMessage}
-                </p>   
+                </p>
               </div>
               {chat.unread > 0 && (
                 <div className="absolute right-4 bottom-3 bg-green-500 text-xs text-white w-5 h-5 rounded-full flex items-center justify-center font-bold">
