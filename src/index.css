@@ -2,16 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-/* index.css */
-#allchat {
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
   -ms-overflow-style: none;
   /* IE and Edge */
   scrollbar-width: none;
   /* Firefox */
-  overflow-y: scroll;
-}
-
-#allchat::-webkit-scrollbar {
-  display: none;
-  /* Chrome, Safari and Opera */
 }

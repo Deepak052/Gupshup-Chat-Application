@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { Plus, MoreVertical, Archive, Menu } from "lucide-react";
 import chatList from "../MockData/chatList.json"
+import OptionsModal from "../Pages/Modals/OptionsModal";
+import NewChatOverlay from "../Pages/Modals/NewChatOverlay";
 
 
 const ChatSidebar = ({ onSelectChat }) => {
   const [activeTab, setActiveTab] = useState("All");
   const [search, setSearch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [openOptionModal, setOpenOptionModal] = useState(false);
+  const [isNewChatOpen, setIsNewChatOpen] = useState(false);
 
   const filteredChats = chatList.filter(
     (chat) =>
@@ -34,9 +38,23 @@ const ChatSidebar = ({ onSelectChat }) => {
         <div className="p-4 flex items-center justify-between">
           <h1 className="text-xl font-bold sm:ml-0 ml-8">Gupshup</h1>
           <div className="flex items-center space-x-3">
-            <Plus className="w-5 h-5" />
-            <MoreVertical className="w-5 h-5" />
+            <Plus
+              className="w-5 h-5 cursor-pointer"
+              onClick={() => setIsNewChatOpen(true)}
+            />
+            <MoreVertical
+              className="w-5 h-5 cursor-pointer"
+              onClick={() => setOpenOptionModal(!openOptionModal)}
+            />
+            <NewChatOverlay
+              isOpen={isNewChatOpen}
+              onClose={() => setIsNewChatOpen(false)}
+            />
           </div>
+          <OptionsModal
+            isOpen={openOptionModal}
+            onClose={() => setOpenOptionModal(false)}
+          />
         </div>
         <div className="px-4 mb-2">
           <input
