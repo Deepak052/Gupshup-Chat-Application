@@ -1,4 +1,4 @@
-import React,{ useState, useEffect, createContext } from "react";
+import React, { useState, useEffect, createContext } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -11,18 +11,29 @@ import SignupPage from "./Pages/SignupPage";
 import NotFound from "./Pages/NotFound";
 import UnderConstruction from "./Pages/UnderConstruction";
 
-
-// Simulated authentication context
 export const AuthContext = createContext();
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem("isAuthenticated") === "true";
+  });
 
+  // Sync localStorage whenever isAuthenticated changes
   useEffect(() => {
-    const storedAuth = localStorage.getItem("isAuthenticated");
-    if (storedAuth === "true") {
-      setIsAuthenticated(true);
-    }
+    localStorage.setItem("isAuthenticated", isAuthenticated);
+  }, [isAuthenticated]);
+
+  // Optional: handle storage events in case other tabs log out
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const storedAuth = localStorage.getItem("isAuthenticated") === "true";
+      setIsAuthenticated(storedAuth);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
   return (
@@ -31,11 +42,11 @@ const App = () => {
         <Routes>
           <Route
             path="/login"
-            element={isAuthenticated ? <Navigate to="/" /> : <LoginPage />}
+            element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" />}
           />
           <Route
             path="/signup"
-            element={isAuthenticated ? <Navigate to="/" /> : <SignupPage />}
+            element={!isAuthenticated ? <SignupPage /> : <Navigate to="/" />}
           />
           <Route
             path="/"
@@ -43,11 +54,23 @@ const App = () => {
           />
           <Route
             path="/settings"
-            element={isAuthenticated ? <ChatApp showSettings={true} /> : <Navigate to="/login" />}
+            element={
+              isAuthenticated ? (
+                <ChatApp showSettings={true} />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
           />
           <Route
             path="/profile"
-            element={isAuthenticated ? <ChatApp showUserProfile={true} /> : <Navigate to="/login" />}
+            element={
+              isAuthenticated ? (
+                <ChatApp showUserProfile={true} />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
           />
           <Route path="/under-construction" element={<UnderConstruction />} />
           <Route path="*" element={<NotFound />} />

@@ -9,8 +9,46 @@ import {
 } from "lucide-react";
 import { ArrowLeft, Search } from "lucide-react";
 import user from "../MockData/user.json";
+import axios from "axios";
+import { useContext } from "react";
+import { AuthContext } from "../App"; // adjust path as needed
+import { useNavigate } from "react-router-dom";
 
 const SettingsPanel = ({ onClose }) => {
+const navigate = useNavigate();
+const { setIsAuthenticated } = useContext(AuthContext);
+
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      await axios.post(
+        "http://localhost:8000/api/v1/users/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Clear localStorage
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("chat_null_disappearing");
+      localStorage.removeItem("chat_null_favourite");
+      localStorage.removeItem("chat_null_muted");
+      localStorage.removeItem("isAuthenticated");
+      localStorage.removeItem("userAbout");
+      localStorage.removeItem("userName");
+
+      // 🔥 This tells App.jsx to rerender and redirect
+      setIsAuthenticated(false);
+
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+  };
   return (
     <div className="w-full sm:w-[380px] h-screen bg-[#111b21] text-white flex flex-col">
       {/* Header */}
@@ -77,8 +115,11 @@ const SettingsPanel = ({ onClose }) => {
           subtitle="Help center, contact us, privacy policy"
         />
 
-        <div className="flex items-center space-x-4 text-red-500 pt-4 border-t border-gray-700">
-          <LogOut className="w-5 h-5" />
+        <div
+          className="flex items-center space-x-4 text-red-500 pt-4 border-t border-gray-700 cursor-pointer"
+          onClick={handleLogout}
+        >
+          <LogOut className="w-5 h-5 " />
           <span className="text-sm">Log out</span>
         </div>
       </div>
