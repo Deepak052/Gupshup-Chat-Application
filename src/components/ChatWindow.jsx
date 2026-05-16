@@ -3,6 +3,7 @@ import { Video, Search, MoreVertical, Plus, Send, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ChatOptionsModal from "../Pages/Modals/ChatOptionsModal";
 import AttachmentMenu from "../Pages/Modals/AttachmentMenu";
+import VideoCall from "./VideoCall";
 import socket from "../socket"; // Your socket instance
 import api from "../utils/api.js";
 
@@ -14,6 +15,10 @@ const ChatWindow = ({ chatId, onAvatarClick, selectedChat }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [isChatOptionOpen, setIsChatOptionOpen] = useState(false);
   const [isAttachmentOpen, setIsAttachmentOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [isVideoCallActive, setIsVideoCallActive] = useState(false);
+  const [incomingCall, setIncomingCall] = useState(null);
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
   const currentUserId = localStorage.getItem("userId");
@@ -44,10 +49,11 @@ const ChatWindow = ({ chatId, onAvatarClick, selectedChat }) => {
         if (isMounted && res.data.success) {
           console.log("messages by id", res.data);
           // Map API messages to the expected format
-          const formattedMessages = res.data.messages.map((msg) => ({
-            id: msg._id,
-            content: msg.content,
-            sender: {
+            const formattedMessages = res.data.messages.map((msg) => ({
+              id: msg._id,
+              content: msg.content,
+              attachments: msg.attachments || [],
+              sender: {
               id: msg.sender._id,
               name:
                 `${msg.sender.firstName || ""} ${
@@ -77,6 +83,10 @@ const ChatWindow = ({ chatId, onAvatarClick, selectedChat }) => {
 
     fetchMessages();
 
+    if (chatId) {
+      socket.emit("join chat", chatId);
+    }
+
     return () => {
       isMounted = false;
     };
@@ -92,6 +102,7 @@ const ChatWindow = ({ chatId, onAvatarClick, selectedChat }) => {
         const formattedMessage = {
           id: message._id,
           content: message.content,
+          attachments: message.attachments || [],
           sender: {
             id: message.sender._id,
             name:
@@ -113,8 +124,35 @@ const ChatWindow = ({ chatId, onAvatarClick, selectedChat }) => {
       }
     });
 
+    socket.on("call-made", async (data) => {
+      // Prompt user to answer or just show the video call screen
+      let cName = "Unknown Caller";
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        const res = await api.get(`/users/get-user/${data.callerId}`, {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        if (res.data.success) {
+          const u = res.data.data;
+          cName = `${u.firstName || ""} ${u.lastName || ""}`.trim() || "Unknown User";
+        }
+      } catch (err) {
+        console.error("Failed to fetch caller details", err);
+      }
+
+      setIncomingCall({
+        offer: data.offer,
+        socketId: data.socketId,
+        callerId: data.callerId,
+        chatId: data.chatId,
+        callerName: cName,
+      });
+      setIsVideoCallActive(true);
+    });
+
     return () => {
       socket.off("receive-message");
+      socket.off("call-made");
     };
   }, [chatId, currentUserId]);
 
@@ -128,6 +166,7 @@ const ChatWindow = ({ chatId, onAvatarClick, selectedChat }) => {
         {
           chatId,
           content: newMessage,
+          attachments: [], // text only for now
         },
         {
           headers: {
@@ -140,6 +179,7 @@ const ChatWindow = ({ chatId, onAvatarClick, selectedChat }) => {
         const newMsg = {
           id: res.data.message._id,
           content: res.data.message.content,
+          attachments: res.data.message.attachments || [],
           sender: {
             id: res.data.message.sender._id,
             name:
@@ -173,6 +213,85 @@ const ChatWindow = ({ chatId, onAvatarClick, selectedChat }) => {
     }
   };
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file || !chatId) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const uploadRes = await api.post("/upload", formData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (uploadRes.data.success) {
+        const fileUrl = uploadRes.data.data.url;
+        let fileType = "document";
+        if (file.type.startsWith("image/")) fileType = "image";
+        else if (file.type.startsWith("video/")) fileType = "video";
+        else if (file.type.startsWith("audio/")) fileType = "audio";
+
+        const attachment = {
+          url: fileUrl,
+          type: fileType,
+          name: file.name,
+        };
+
+        const res = await api.post(
+          "/message",
+          {
+            chatId,
+            content: "",
+            attachments: [attachment],
+          },
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }
+        );
+
+        if (res.data.success) {
+          const newMsg = {
+            id: res.data.message._id,
+            content: res.data.message.content,
+            attachments: res.data.message.attachments || [],
+            sender: {
+              id: res.data.message.sender._id,
+              name: `${res.data.message.sender.firstName || ""} ${
+                res.data.message.sender.lastName || ""
+              }`.trim() || "Unknown User",
+              avatar: res.data.message.sender.avatar || "https://randomuser.me/api/portraits/lego/2.jpg",
+            },
+            time: new Date(res.data.message.createdAt).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            type: "sent",
+          };
+
+          setMessages((prev) => [...prev, newMsg]);
+          setFilteredMessages((prev) => [...prev, newMsg]);
+
+          socket.emit("send-message", {
+            chatId,
+            message: res.data.message,
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Error uploading file:", err);
+      alert("Failed to upload file.");
+    } finally {
+      setUploading(false);
+      e.target.value = null; // reset input
+    }
+  };
+
   const handleSearchChange = (e) => {
     const term = e.target.value;
     setSearchTerm(term);
@@ -193,12 +312,34 @@ const ChatWindow = ({ chatId, onAvatarClick, selectedChat }) => {
   };
 
   const handleIconClick = (feature) => {
-    alert(`${feature} feature coming soon!`);
-    navigate("/under-construction");
+    if (feature === "Video Call") {
+      if (!selectedChat || selectedChat.isGroup) {
+        alert("Video call is only available for 1-to-1 chats currently.");
+        return;
+      }
+      setIsVideoCallActive(true);
+    } else {
+      alert(`${feature} feature coming soon!`);
+      navigate("/under-construction");
+    }
   };
 
   return (
     <div className="flex flex-col flex-1 h-screen bg-[url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')] bg-cover bg-center relative">
+      {isVideoCallActive && (
+        <VideoCall 
+          chatId={incomingCall ? incomingCall.chatId : chatId}
+          targetUserId={incomingCall ? incomingCall.callerId : selectedChat?.targetUserId}
+          callerSocketId={incomingCall?.socketId}
+          isReceivingCall={!!incomingCall}
+          callerName={incomingCall ? incomingCall.callerName : selectedChat?.name}
+          offer={incomingCall?.offer}
+          onEndCall={() => {
+            setIsVideoCallActive(false);
+            setIncomingCall(null);
+          }}
+        />
+      )}
       {/* Header */}
       <div className="flex items-center justify-between bg-[#202c33] p-3 text-white">
         <div className="flex items-center space-x-3">
@@ -233,6 +374,7 @@ const ChatWindow = ({ chatId, onAvatarClick, selectedChat }) => {
           isOpen={isChatOptionOpen}
           onClose={() => setIsChatOptionOpen(false)}
           chatId={chatId}
+          selectedChat={selectedChat}
         />
       </div>
 
@@ -268,11 +410,32 @@ const ChatWindow = ({ chatId, onAvatarClick, selectedChat }) => {
                 <div
                   className={`max-w-[80%] sm:max-w-[70%] ${
                     msg.type === "sent" ? "bg-[#005c4b]" : "bg-[#2a2f32]"
-                  } text-white rounded-lg px-2 sm:px-3 py-2 text-xs sm:text-sm relative whitespace-pre-line`}
+                  } text-white rounded-lg px-2 sm:px-3 py-2 text-xs sm:text-sm relative whitespace-pre-line break-words overflow-hidden`}
                 >
-                  <div className="font-semibold text-xs">{msg.sender.name}</div>
+                  <div className="font-semibold text-xs text-green-400 mb-1">{msg.sender.name}</div>
+                  
+                  {msg.attachments && msg.attachments.length > 0 && (
+                    <div className="mb-2">
+                      {msg.attachments.map((att, i) => (
+                        <div key={i} className="rounded-md overflow-hidden bg-black/20 p-1 mb-1 max-w-[200px]">
+                          {att.type === "image" ? (
+                            <img src={att.url} alt={att.name} className="w-full h-auto object-cover rounded" />
+                          ) : att.type === "video" ? (
+                            <video src={att.url} controls className="w-full max-w-full rounded"></video>
+                          ) : att.type === "audio" ? (
+                            <audio src={att.url} controls className="w-full max-w-[180px]"></audio>
+                          ) : (
+                            <a href={att.url} target="_blank" rel="noreferrer" className="flex items-center text-blue-300 hover:underline break-all">
+                              📎 {att.name}
+                            </a>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
                   {msg.content}
-                  <div className="text-[8px] sm:text-[10px] text-gray-300 text-right mt-1">
+                  <div className="text-[8px] sm:text-[10px] text-gray-300 text-right mt-1 inline-block float-right ml-2">
                     {msg.time}
                   </div>
                 </div>
@@ -303,8 +466,24 @@ const ChatWindow = ({ chatId, onAvatarClick, selectedChat }) => {
             onClose={() => setIsAttachmentOpen(false)}
             onOptionClick={(option) => {
               setIsAttachmentOpen(false);
-              alert(`${option} clicked!`);
+              if (["Photos & videos", "Document", "Audio"].includes(option)) {
+                let acceptStr = "*/*";
+                if (option === "Photos & videos") acceptStr = "image/*,video/*";
+                if (option === "Document") acceptStr = ".pdf,.doc,.docx,.xls,.xlsx,.txt";
+                if (option === "Audio") acceptStr = "audio/*";
+                
+                fileInputRef.current.setAttribute("accept", acceptStr);
+                fileInputRef.current.click();
+              } else {
+                alert(`${option} clicked! (Coming soon)`);
+              }
             }}
+          />
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            className="hidden" 
+            onChange={handleFileUpload} 
           />
           <input
             type="text"

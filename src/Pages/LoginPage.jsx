@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AuthForm from "../components/AuthForm";
 import { AuthContext } from "../App";
 import axios from "axios";
+import { Api_url } from "../utils/constant";
 
 // Simple in-memory "OTP store" for DEMO only (replace with your API in production)
 const otpStore = {};
@@ -11,18 +12,18 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   // Fully functional async handler for use with AuthForm's async handleSubmit
-  const handleLogin = async ({ phone, otp, action }) => {
-    const baseUrl = "http://localhost:8000/api/v1/users";
+  const handleLogin = async ({ email, otp, action }) => {
+    const baseUrl =  `${Api_url}users`;
     const fcmToken="noToken";
 
     // Step 1: Send OTP
     if (action === "send-otp") {
-      if (!/^[0-9]{10,15}$/.test(phone)) {
-        throw new Error("Please enter a valid phone number (10-15 digits).");
+      if (!/^\S+@\S+\.\S+$/.test(email)) {
+        throw new Error("Please enter a valid email address.");
       }
       try {
-        const response = await axios.post(`${baseUrl}/login`, { phone });
-        return { message: response.data.message || "OTP sent to your phone" };
+        const response = await axios.post(`${baseUrl}/login`, { email });
+        return { message: response.data.message || "OTP sent to your email" };
       } catch (error) {
         throw new Error(
           error.response?.data?.message ||
@@ -35,14 +36,15 @@ const LoginPage = () => {
     if (action === "verify-otp") {
       try {
         const response = await axios.post(`${baseUrl}/verify_otp`, {
-          phone,
+          email,
           otp,
           fcmToken,
         });
-        const { accessToken, refreshToken } = response.data.data;
+        const { accessToken, refreshToken, _id } = response.data.data;
         // Store tokens for authentication
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("userId", _id);
         localStorage.setItem("isAuthenticated", "true");
         setIsAuthenticated(true);
         return { message: "Login successful!" };

@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 
 const AuthForm = ({ mode = "login", onSubmit }) => {
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [step, setStep] = useState(1);
@@ -45,13 +45,13 @@ const AuthForm = ({ mode = "login", onSubmit }) => {
     try {
       // Step 1: Send OTP
       if (step === 1) {
-        if (!phone || (isSignup && (!firstName || !lastName))) {
+        if (!email || (isSignup && (!firstName || !lastName))) {
           setError("Please fill all fields.");
           setLoading(false);
           return;
         }
         const res = await onSubmit({
-          phone,
+          email,
           firstName: isSignup ? firstName : undefined,
           lastName: isSignup ? lastName : undefined,
           action: "send-otp",
@@ -72,7 +72,7 @@ const AuthForm = ({ mode = "login", onSubmit }) => {
         }
         // Await API/parent to verify
         const res = await onSubmit({
-          phone,
+          email,
           otp,
           firstName: isSignup ? firstName : undefined,
           lastName: isSignup ? lastName : undefined,
@@ -135,16 +135,14 @@ const AuthForm = ({ mode = "login", onSubmit }) => {
             </>
           )}
           <div>
-            <label className="block text-sm text-gray-300 mb-1">Phone</label>
+            <label className="block text-sm text-gray-300 mb-1">Email</label>
             <input
-              type="tel"
+              type="email"
               required
-              pattern="[0-9]{10,15}"
-              maxLength={10}
-              placeholder="Enter your phone number"
+              placeholder="Enter your email address"
               className="w-full px-4 py-2 bg-[#111b21] text-white rounded-md focus:outline-none"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
             />
           </div>

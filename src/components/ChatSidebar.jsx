@@ -14,6 +14,7 @@ const ChatSidebar = ({ onSelectChat }) => {
   const [isNewChatOpen, setIsNewChatOpen] = useState(false);
   const [chatList, setChatList] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
+  const [isUsersLoaded, setIsUsersLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -87,6 +88,7 @@ const ChatSidebar = ({ onSelectChat }) => {
 
               return {
                 id: chat._id,
+                targetUserId: chat.isGroupChat ? null : chat.members.find((member) => member._id !== currentUserId)?._id,
                 name: chatName,
                 avatar,
                 lastMessage,
@@ -116,10 +118,10 @@ const ChatSidebar = ({ onSelectChat }) => {
       }
     };
 
-    if (allUsers.length > 0) {
+    if (isUsersLoaded) {
       fetchChats();
     }
-  }, [navigate, allUsers, currentUserId]);
+  }, [navigate, isUsersLoaded, allUsers, currentUserId]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -159,6 +161,8 @@ const ChatSidebar = ({ onSelectChat }) => {
       } catch (err) {
         console.error("Error fetching users:", err);
         setAllUsers([]);
+      } finally {
+        setIsUsersLoaded(true);
       }
     };
 
@@ -233,6 +237,7 @@ const ChatSidebar = ({ onSelectChat }) => {
           unread: 0,
           isFavourite: false,
           isGroup: false,
+          targetUserId: userId,
         };
       }
 
@@ -244,7 +249,7 @@ const ChatSidebar = ({ onSelectChat }) => {
         return [...prev, newChat];
       });
       setIsNewChatOpen(false);
-      onSelectChat(newChat.id);
+      onSelectChat(newChat);
     } catch (err) {
       console.error("Error starting new chat:", err);
       setError("Failed to start new chat.");
@@ -341,7 +346,7 @@ const ChatSidebar = ({ onSelectChat }) => {
                 className="flex items-center px-4 py-2 hover:bg-[#2a2a2a] cursor-pointer relative"
                 onClick={() => {
                   console.log("Selected chat ID:", chat.id);
-                  onSelectChat(chat.id);
+                  onSelectChat(chat);
                   setIsOpen(false);
                 }}
               >

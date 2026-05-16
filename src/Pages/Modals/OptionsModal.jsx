@@ -4,6 +4,7 @@ import { Users, Star, CheckSquare, LogOut } from "lucide-react";
 import axios from "axios";
 import { useContext } from "react";
 import { AuthContext } from "../../App"; // adjust path as needed
+import { Api_url } from "../../utils/constant";
 
 
 const OptionsModal = ({ isOpen, onClose }) => {
@@ -27,37 +28,47 @@ const OptionsModal = ({ isOpen, onClose }) => {
     };
   }, [isOpen, onClose]);
 
-const handleLogout = async () => {
-  try {
-    const token = localStorage.getItem("accessToken");
-    await axios.post(
-      "http://localhost:8000/api/v1/users/logout",
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
 
-    // Clear localStorage
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("chat_null_disappearing");
-    localStorage.removeItem("chat_null_favourite");
-    localStorage.removeItem("chat_null_muted");
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("userAbout");
-    localStorage.removeItem("userName");
+      // 🔐 Call backend logout API
+      await axios.post(
+        `${Api_url}users/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    // 🔥 This tells App.jsx to rerender and redirect
-    setIsAuthenticated(false);
+      // 🧹 Clear all relevant localStorage keys
+      const keysToRemove = [
+        "accessToken",
+        "refreshToken",
+        "chat_null_disappearing",
+        "chat_null_favourite",
+        "chat_null_muted",
+        "isAuthenticated",
+        "userAbout",
+        "userName",
+      ];
 
-    navigate("/login");
-  } catch (err) {
-    console.error("Logout error:", err);
-  }
-};
+      keysToRemove.forEach((key) => localStorage.removeItem(key));
+
+      // 🚪 Log out in frontend
+      setIsAuthenticated(false);
+      navigate("/login");
+    } catch (err) {
+      console.error(
+        "Logout failed:",
+        err?.response?.data?.message || err.message
+      );
+      // Optional: show error to user via toast/snackbar
+    }
+  };
+  
 
 
   if (!isOpen) return null;

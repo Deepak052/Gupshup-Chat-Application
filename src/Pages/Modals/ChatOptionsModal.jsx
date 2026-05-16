@@ -12,11 +12,11 @@ import {
   Trash,
   Trash2,
 } from "lucide-react";
-import chatList from "../../MockData/chatList.json";
+import api from "../../utils/api.js";
 
-const ChatOptionsModal = ({ isOpen, onClose, chatId }) => {
+const ChatOptionsModal = ({ isOpen, onClose, chatId, selectedChat }) => {
   const navigate = useNavigate();
-  const chat = chatList.find((chat) => chat.id === chatId) || {};
+  const chat = selectedChat || {};
 
   const [isMuted, setIsMuted] = useState(
     localStorage.getItem(`chat_${chatId}_muted`) === "true" || false
@@ -76,24 +76,65 @@ const ChatOptionsModal = ({ isOpen, onClose, chatId }) => {
     onClose();
   };
 
-  const handleReport = () => {
-    alert(`Reported ${chat.name}!`);
-    onClose();
+  const handleReport = async () => {
+    if (!chat.targetUserId) {
+      alert("Cannot report a group chat currently.");
+      return;
+    }
+    try {
+      const token = localStorage.getItem("accessToken");
+      await api.post("/users/report", { targetUserId: chat.targetUserId }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert(`Reported ${chat.name}!`);
+      onClose();
+    } catch (err) {
+      alert("Failed to report user.");
+    }
   };
 
-  const handleBlock = () => {
-    alert(`Blocked ${chat.name}!`);
-    onClose();
+  const handleBlock = async () => {
+    if (!chat.targetUserId) {
+      alert("Cannot block a group chat.");
+      return;
+    }
+    try {
+      const token = localStorage.getItem("accessToken");
+      await api.post("/users/block", { targetUserId: chat.targetUserId }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert(`Blocked ${chat.name}!`);
+      onClose();
+    } catch (err) {
+      alert("Failed to block user.");
+    }
   };
 
-  const handleClearChat = () => {
-    alert(`Cleared chat with ${chat.name}!`);
-    onClose();
+  const handleClearChat = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      await api.put(`/chat/${chatId}/clear`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert(`Cleared chat with ${chat.name}!`);
+      onClose();
+    } catch (err) {
+      alert("Failed to clear chat.");
+    }
   };
 
-  const handleDeleteChat = () => {
-    alert(`Deleted chat with ${chat.name}!`);
-    onClose();
+  const handleDeleteChat = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      await api.put(`/chat/${chatId}/delete`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert(`Deleted chat with ${chat.name}!`);
+      // Optionally trigger an event to update the sidebar
+      onClose();
+    } catch (err) {
+      alert("Failed to delete chat.");
+    }
   };
 
   if (!isOpen) return null;

@@ -9,14 +9,14 @@ import {
   Ban,
   Flag,
 } from "lucide-react";
+import api from "../utils/api.js";
 
-const ClientProfile = ({ onClose }) => {
+const ClientProfile = ({ onClose, chat }) => {
   const dummyUser = {
-    name: "Muski🐝",
-    phone: "+91 99379 50120",
-    about: "🌸~हमारे साथ भी रूहानियत फिर किस बात की शिकायत..~🌸",
-    avatar:
-      "https://i.pinimg.com/originals/c7/02/33/c702330f52aa41a8b185089cb6a07e5e.png",
+    name: chat?.name || "Unknown User",
+    phone: "",
+    about: "Hey there! I am using Gupshup.",
+    avatar: chat?.avatar || "https://randomuser.me/api/portraits/lego/2.jpg",
     media: [
       "https://i.ibb.co/VSpvS8d/family.jpg",
       "https://i.ibb.co/VSpvS8d/family.jpg",
@@ -86,16 +86,52 @@ const ClientProfile = ({ onClose }) => {
     alert("Starred messages feature coming soon!");
   };
 
-  const handleBlock = () => {
-    alert(`Blocked ${name}!`);
+  const handleBlock = async () => {
+    if (!chat?.targetUserId) {
+      alert("Cannot block a group chat.");
+      return;
+    }
+    try {
+      const token = localStorage.getItem("accessToken");
+      await api.post("/users/block", { targetUserId: chat.targetUserId }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert(`Blocked ${name}!`);
+      onClose();
+    } catch (err) {
+      alert("Failed to block user.");
+    }
   };
 
-  const handleReport = () => {
-    alert(`Reported ${name}!`);
+  const handleReport = async () => {
+    if (!chat?.targetUserId) {
+      alert("Cannot report a group chat currently.");
+      return;
+    }
+    try {
+      const token = localStorage.getItem("accessToken");
+      await api.post("/users/report", { targetUserId: chat.targetUserId }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert(`Reported ${name}!`);
+      onClose();
+    } catch (err) {
+      alert("Failed to report user.");
+    }
   };
 
-  const handleDeleteChat = () => {
-    alert("Chat deleted!");
+  const handleDeleteChat = async () => {
+    if (!chat?.id) return;
+    try {
+      const token = localStorage.getItem("accessToken");
+      await api.put(`/chat/${chat.id}/delete`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert("Chat deleted!");
+      onClose();
+    } catch (err) {
+      alert("Failed to delete chat.");
+    }
   };
   useEffect(() => {
     const handleClickOutside = (event) => {

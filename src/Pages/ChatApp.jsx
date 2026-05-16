@@ -7,13 +7,30 @@ import ChatWindow from "../components/ChatWindow";
 import ClientProfile from "../components/ClientProfile";
 import UserProfile from "../components/UserProfile";
 import SettingsPanel from "../components/SettingsPanel";
+import socket from "../socket";
+import { useEffect } from "react";
 
 const ChatApp = ({ showSettings = false, showUserProfile = false }) => {
   const [selectedChatId, setSelectedChatId] = useState(null);
+  const [selectedChat, setSelectedChat] = useState(null);
   const [showClientProfile, setShowClientProfile] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (userId) {
+      socket.emit("setup", { _id: userId });
+      
+      socket.on("connected", () => {
+        console.log("Socket connected successfully");
+      });
+      
+      return () => {
+        socket.off("connected");
+      };
+    }
+  }, []);
 
   const handleProfileClick = () => {
     navigate("/profile");
@@ -34,15 +51,11 @@ const ChatApp = ({ showSettings = false, showUserProfile = false }) => {
       </div>
 
       {/* ChatSidebar */}
-      <div
-        className={`w-full md:w-80 bg-[#1e1e1e] border-r border-gray-700 overflow-y-auto fixed md:sticky top-0 transition-transform duration-300 ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 z-40`}
-      >
+      <div className="z-40">
         <ChatSidebar
-          onSelectChat={(chatId) => {
-            setSelectedChatId(chatId);
-            setIsSidebarOpen(false);
+          onSelectChat={(chat) => {
+            setSelectedChat(chat);
+            setSelectedChatId(chat.id);
           }}
         />
       </div>
@@ -51,6 +64,7 @@ const ChatApp = ({ showSettings = false, showUserProfile = false }) => {
       <div className="flex flex-1 bg-[url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')] bg-cover bg-center relative z-10">
         <ChatWindow
           chatId={selectedChatId}
+          selectedChat={selectedChat}
           onAvatarClick={() => setShowClientProfile(true)}
         />
       </div>
@@ -58,7 +72,7 @@ const ChatApp = ({ showSettings = false, showUserProfile = false }) => {
       {/* ClientProfile */}
       {showClientProfile && (
         <div className="fixed right-0 top-0 h-full w-full sm:w-[380px] bg-[#111b21] z-20">
-          <ClientProfile onClose={() => setShowClientProfile(false)} />
+          <ClientProfile onClose={() => setShowClientProfile(false)} chat={selectedChat} />
         </div>
       )}
 
