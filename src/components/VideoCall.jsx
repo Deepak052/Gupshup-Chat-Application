@@ -257,10 +257,11 @@ const VideoCall = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center">
-      {/* Videos Container */}
-      <div className="flex-1 w-full relative max-w-4xl max-h-screen">
-        {/* Main Video (Other person) */}
+    <div className="fixed inset-0 z-[100] bg-[#111b21] flex flex-col h-[100dvh] w-screen overflow-hidden">
+      {/* Video Area */}
+      <div className="relative flex-1 w-full bg-black overflow-hidden flex items-center justify-center">
+        
+        {/* Remote Video or Status */}
         {callAccepted && !callEnded ? (
           <video
             playsInline
@@ -270,15 +271,15 @@ const VideoCall = ({
               }
             }}
             autoPlay
-            className="w-full h-full object-cover rounded-lg shadow-xl"
+            className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-white space-y-8 mt-20">
-            <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden border-4 border-green-500 shadow-lg shadow-green-500/20">
-              <span className="text-4xl">📞</span>
+          <div className="flex flex-col items-center justify-center text-white px-4 text-center">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden border-4 border-green-500 shadow-lg shadow-green-500/20 mb-6">
+              <span className="text-3xl sm:text-4xl">📞</span>
             </div>
             
-            <h2 className="text-3xl font-light tracking-wide">
+            <h2 className="text-xl sm:text-3xl font-light tracking-wide mb-8">
               {isReceivingCall 
                 ? `Incoming Call from ${callerName}...` 
                 : isCalling 
@@ -286,24 +287,24 @@ const VideoCall = ({
                   : `Ready to call ${callerName}?`}
             </h2>
 
-            <div className="flex items-center gap-6 mt-10">
+            <div className="flex flex-wrap items-center justify-center gap-4">
               {isReceivingCall && !callAccepted && (
                 <button
                   onClick={answerCall}
-                  className="bg-green-500 hover:bg-green-600 px-8 py-4 rounded-full flex items-center shadow-lg transform transition hover:scale-105 active:scale-95"
+                  className="bg-green-500 hover:bg-green-600 px-6 sm:px-8 py-3 sm:py-4 rounded-full flex items-center shadow-lg transform transition hover:scale-105 active:scale-95"
                 >
-                  <Phone className="w-6 h-6 mr-3" />
-                  <span className="font-semibold text-lg">Answer</span>
+                  <Phone className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3" />
+                  <span className="font-semibold text-base sm:text-lg">Answer</span>
                 </button>
               )}
               
               {!isReceivingCall && !callAccepted && !isCalling && (
                 <button
                   onClick={callUser}
-                  className="bg-blue-500 hover:bg-blue-600 px-8 py-4 rounded-full flex items-center shadow-lg transform transition hover:scale-105 active:scale-95"
+                  className="bg-blue-500 hover:bg-blue-600 px-6 sm:px-8 py-3 sm:py-4 rounded-full flex items-center shadow-lg transform transition hover:scale-105 active:scale-95"
                 >
-                  <Phone className="w-6 h-6 mr-3" />
-                  <span className="font-semibold text-lg">Start Call</span>
+                  <Phone className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3" />
+                  <span className="font-semibold text-base sm:text-lg">Start Call</span>
                 </button>
               )}
 
@@ -311,10 +312,10 @@ const VideoCall = ({
               {(!callAccepted) && (
                 <button
                   onClick={leaveCall}
-                  className="bg-red-500 hover:bg-red-600 px-8 py-4 rounded-full flex items-center shadow-lg transform transition hover:scale-105 active:scale-95"
+                  className="bg-red-500 hover:bg-red-600 px-6 sm:px-8 py-3 sm:py-4 rounded-full flex items-center shadow-lg transform transition hover:scale-105 active:scale-95"
                 >
-                  <PhoneOff className="w-6 h-6 mr-3" />
-                  <span className="font-semibold text-lg">
+                  <PhoneOff className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3" />
+                  <span className="font-semibold text-base sm:text-lg">
                     {isReceivingCall ? "Decline" : "Cancel"}
                   </span>
                 </button>
@@ -323,9 +324,9 @@ const VideoCall = ({
           </div>
         )}
 
-        {/* Local Video */}
+        {/* Local Video PIP */}
         {stream && (
-          <div className="absolute bottom-6 right-6 w-32 md:w-48 aspect-[3/4] bg-gray-900 rounded-xl overflow-hidden shadow-2xl border-2 border-gray-700 z-10">
+          <div className="absolute bottom-4 right-4 w-28 sm:w-40 aspect-[3/4] bg-gray-800 rounded-lg overflow-hidden shadow-2xl border border-gray-600 z-10">
             <video
               playsInline
               muted
@@ -335,39 +336,39 @@ const VideoCall = ({
                 }
               }}
               autoPlay
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transform scale-x-[-1]"
             />
-            <div className="absolute bottom-2 left-2 bg-black/50 px-2 py-1 rounded text-xs text-white">You</div>
+            <div className="absolute bottom-1 left-1 bg-black/60 px-1.5 py-0.5 rounded text-[10px] text-white">You</div>
           </div>
         )}
       </div>
 
-      {/* Controls */}
-      <div className="w-full h-24 bg-[#111b21] flex items-center justify-center space-x-6 px-6">
+      {/* Controls Area */}
+      <div className="h-20 sm:h-24 w-full bg-[#202c33] flex items-center justify-center space-x-6 sm:space-x-8 px-4 flex-shrink-0 z-20">
         <button
           onClick={toggleAudio}
-          className={`p-4 rounded-full transition-colors ${isAudioMuted ? "bg-red-500 hover:bg-red-600 text-white" : "bg-gray-700 hover:bg-gray-600 text-white"}`}
+          className={`p-3 sm:p-4 rounded-full transition-colors ${isAudioMuted ? "bg-red-500 hover:bg-red-600 text-white" : "bg-gray-700 hover:bg-gray-600 text-white"}`}
           title={isAudioMuted ? "Unmute Audio" : "Mute Audio"}
         >
-          {isAudioMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+          {isAudioMuted ? <MicOff className="w-5 h-5 sm:w-6 sm:h-6" /> : <Mic className="w-5 h-5 sm:w-6 sm:h-6" />}
         </button>
         
         {callAccepted && (
           <button
             onClick={leaveCall}
-            className="p-4 rounded-full bg-red-500 hover:bg-red-600 text-white transform transition hover:scale-105 active:scale-95 shadow-lg shadow-red-500/20"
+            className="p-3 sm:p-4 rounded-full bg-red-500 hover:bg-red-600 text-white transform transition hover:scale-105 active:scale-95 shadow-lg shadow-red-500/20"
             title="End Call"
           >
-            <PhoneOff className="w-8 h-8" />
+            <PhoneOff className="w-6 h-6 sm:w-8 sm:h-8" />
           </button>
         )}
         
         <button
           onClick={toggleVideo}
-          className={`p-4 rounded-full transition-colors ${isVideoMuted ? "bg-red-500 hover:bg-red-600 text-white" : "bg-gray-700 hover:bg-gray-600 text-white"}`}
+          className={`p-3 sm:p-4 rounded-full transition-colors ${isVideoMuted ? "bg-red-500 hover:bg-red-600 text-white" : "bg-gray-700 hover:bg-gray-600 text-white"}`}
           title={isVideoMuted ? "Enable Video" : "Disable Video"}
         >
-          {isVideoMuted ? <VideoOff className="w-6 h-6" /> : <Video className="w-6 h-6" />}
+          {isVideoMuted ? <VideoOff className="w-5 h-5 sm:w-6 sm:h-6" /> : <Video className="w-5 h-5 sm:w-6 sm:h-6" />}
         </button>
       </div>
     </div>
