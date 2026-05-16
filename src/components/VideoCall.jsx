@@ -16,10 +16,11 @@ const VideoCall = ({
   const [callEnded, setCallEnded] = useState(false);
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(false);
+  const [isVideoMuted, setIsVideoMuted] = useState(false);
   const [isCalling, setIsCalling] = useState(false);
+  const [remoteStream, setRemoteStream] = useState(null);
   
   const myVideo = useRef();
-  const userVideo = useRef();
   const connectionRef = useRef();
   const streamRef = useRef(null);
 
@@ -71,9 +72,6 @@ const VideoCall = ({
       .then((currentStream) => {
         setStream(currentStream);
         streamRef.current = currentStream;
-        if (myVideo.current) {
-          myVideo.current.srcObject = currentStream;
-        }
       })
       .catch((err) => console.error("Failed to get local stream", err));
 
@@ -126,9 +124,7 @@ const VideoCall = ({
     }
 
     peerConnection.ontrack = (event) => {
-      if (userVideo.current) {
-        userVideo.current.srcObject = event.streams[0];
-      }
+      setRemoteStream(event.streams[0]);
     };
 
     peerConnection.oniceconnectionstatechange = () => {
@@ -187,9 +183,7 @@ const VideoCall = ({
     }
 
     peerConnection.ontrack = (event) => {
-      if (userVideo.current) {
-        userVideo.current.srcObject = event.streams[0];
-      }
+      setRemoteStream(event.streams[0]);
     };
 
     peerConnection.oniceconnectionstatechange = () => {
@@ -270,7 +264,11 @@ const VideoCall = ({
         {callAccepted && !callEnded ? (
           <video
             playsInline
-            ref={userVideo}
+            ref={(node) => {
+              if (node && remoteStream) {
+                node.srcObject = remoteStream;
+              }
+            }}
             autoPlay
             className="w-full h-full object-cover rounded-lg shadow-xl"
           />
@@ -331,7 +329,11 @@ const VideoCall = ({
             <video
               playsInline
               muted
-              ref={myVideo}
+              ref={(node) => {
+                if (node && stream) {
+                  node.srcObject = stream;
+                }
+              }}
               autoPlay
               className="w-full h-full object-cover"
             />
